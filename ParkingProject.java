@@ -20,7 +20,7 @@ public class ParkingProject
     java.util.Date sTime = new java.util.Date();
     java.util.Date eTime = new java.util.Date();
 
-        //createNewTable();
+    //createNewTable();
     ParkingProject app = new ParkingProject();
 
     //the numbers here are temporary (just to test)
