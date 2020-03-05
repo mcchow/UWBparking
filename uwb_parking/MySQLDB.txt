@@ -1,0 +1,73 @@
+
+
+CREATE TABLE VehicleType (
+  ID INT NOT NULL,
+  Description VARCHAR(15),
+
+  Primary key (ID)
+);
+
+
+CREATE TABLE Vehicle (
+   ID  INT,
+   RFID   VARCHAR(10) ,
+   
+   PRIMARY KEY  (ID),
+   UNIQUE KEY (RFID)
+
+);
+
+
+
+CREATE TABLE Status(
+   ID  INT,
+   Description  VARCHAR(10),
+
+   Primary key (ID),
+   UNIQUE Key (Description)
+);
+
+CREATE TABLE Building (
+   ID INT,
+   Name  VARCHAR(10) NOT NULL,
+   
+   Primary key (ID),
+   UNIQUE Key (Name)
+);
+
+CREATE TABLE Floor (
+   ID   INT, 
+   BuildingID  INT NOT NULL,
+   FloorNumber VARCHAR(1) NOT NULL,
+
+   Primary key (ID),
+   Foreign key (BuildingID) references Building (ID)
+);
+
+CREATE TABLE ParkingSpot (
+   ID   Integer,
+   FloorID   INT NOT NULL,
+   StatusID  INT NOT NULL,
+   VehicleTypeID  INT NOT NULL,
+   SpotNumber   VARCHAR(3),
+
+   Primary key (ID),
+   FOREIGN Key (StatusID) references Status (ID),
+   Foreign Key (VehicleTypeID) references VehicleType(ID),
+   Foreign key (floorID) references Floor (ID)
+);
+
+
+
+CREATE TABLE  ParkingHistory (
+   ID   INT NOT NULL,
+   ParkingSpotID INT NOT NULL,
+   VehicleID     INT NOT NULL,
+   StartTime     DATETIME NOT NULL,
+   EndTime       DATETIME,
+
+   Primary Key   (ID),
+   FOREIGN KEY   (ParkingSpotID) references ParkingSpot (ID),
+   FOREIGN KEY   (VehicleID)  references Vehicle (ID)
+   
+);
