@@ -29,6 +29,22 @@ public class ParkingProject
     app.insertVehicle(2, "22343");
     app.insertVehicle(3, "27843");
 
+    app.insertBuilding(23, "garage");
+    app.insertBuilding(14, "ground");
+    app.insertBuilding(41, "b92");
+
+    app.insertStatus(25346, "taken");
+    app.insertStatus(23498, "vacant");
+    app.insertStatus(87652, "free");
+
+    app.insertVehicleType(254983, "car");
+    app.insertVehicleType(905427, "SUV");
+    app.insertVehicleType(984463, "motorcycle");
+
+    app.insertFloor(3, 23, "3");
+    app.insertFloor(1, 14, "1");
+    app.insertFloor(5, 41, "5");
+
     app.insertParkingSpot(34, 3, 25346, 254983, "b87");
     app.insertParkingSpot(67, 1, 23498, 905427, "a85");
     app.insertParkingSpot(87, 5, 87652, 984463, "b32");
@@ -131,6 +147,59 @@ public class ParkingProject
             pstmt.setInt(3, sID);
             pstmt.setInt(4, vehTypeID);
             pstmt.setString(5, spotNum);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertStatus(int id, String description){
+        String sql = "INSERT INTO Status(ID, Description) VALUES(?, ?)";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.setString(2, description);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertFloor(int id, int buildingID, String floorNum) {
+        String sql = "INSERT INTO Floor(ID, buildingID, floorNumber) VALUES(?, ?, ?)";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.setInt(2, buildingID);
+            pstmt.setString(3, floorNum);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertBuilding(int id, String name) {
+        String sql = "INSERT INTO Building(ID, name) VALUES(?, ?)";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.setString(2, name);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertVehicleType(int id, String Description) {
+        String sql = "INSERT INTO VehicleType(ID, Description) VALUES(?, ?)";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.setString(2, Description);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
