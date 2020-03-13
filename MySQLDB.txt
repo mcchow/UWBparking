@@ -1,0 +1,133 @@
+DROP TABLE IF EXISTS ParkingHistory;
+DROP TABLE IF EXISTS ParkingSpot;
+DROP TABLE IF EXISTS Status;
+DROP TABLE IF EXISTS Vehicle;
+DROP TABLE IF EXISTS VehicleType;
+DROP TABLE IF EXISTS Floor;
+DROP TABLE IF EXISTS Building;
+
+CREATE TABLE VehicleType (
+  ID INT NOT NULL,
+  Description VARCHAR(15),
+
+  Primary key (ID)
+);
+
+
+CREATE TABLE Vehicle (
+   ID  INT NOT NULL AUTO_INCREMENT,
+   RFID   VARCHAR(10) ,
+
+   PRIMARY KEY  (ID),
+   UNIQUE KEY (RFID)
+
+);
+
+CREATE TABLE Status(
+   ID  INT,
+   Description  VARCHAR(20),
+
+   Primary key (ID),
+   UNIQUE Key (Description)
+);
+
+
+CREATE TABLE Building (
+   ID INT,
+   Name  VARCHAR(10) NOT NULL,
+
+   Primary key (ID),
+   UNIQUE Key (Name)
+);
+
+
+CREATE TABLE Floor (
+   ID   INT,
+   BuildingID  INT NOT NULL,
+   FloorNumber VARCHAR(1) NOT NULL,
+
+   Primary key (ID),
+   Foreign key (BuildingID) references Building (ID)
+);
+
+
+CREATE TABLE ParkingSpot (
+   ID   Integer,
+   FloorID   INT NOT NULL,
+   StatusID  INT NOT NULL,
+   VehicleTypeID  INT NOT NULL,
+   SpotNumber   INT,
+
+   Primary key (ID),
+   FOREIGN Key (StatusID) references Status (ID),
+   Foreign Key (VehicleTypeID) references VehicleType(ID),
+   Foreign key (floorID) references Floor (ID)
+);
+
+
+CREATE TABLE  ParkingHistory (
+   ID   INT NOT NULL AUTO_INCREMENT,
+   ParkingSpotID INT NOT NULL,
+   VehicleID     INT NOT NULL,
+   StartTime     DATETIME NOT NULL,
+   EndTime       DATETIME,
+
+   Primary Key   (ID),
+   FOREIGN KEY   (ParkingSpotID) references ParkingSpot (ID),
+   FOREIGN KEY   (VehicleID)  references Vehicle (ID)
+
+);
+
+INSERT INTO Vehicle(RFID)
+VALUES(23543);
+
+INSERT INTO Vehicle(RFID)
+VALUES(22343);
+
+INSERT INTO Vehicle(RFID)
+VALUES(27843);
+
+INSERT INTO Building(ID, name)
+VALUES(23, 'garage');
+
+INSERT INTO Building(ID, name)
+VALUES(14, 'ground');
+
+INSERT INTO Building(ID, name)
+VALUES(41, 'b92');
+
+INSERT INTO Status(ID, Description)
+VALUES(1, 'Available');
+
+INSERT INTO Status(ID, Description)
+VALUES(2, 'Occupied');
+
+INSERT INTO Status(ID, Description)
+VALUES(3, 'Unavailable');
+
+INSERT INTO VehicleType(ID, Description)
+VALUES(254983, 'car');
+
+INSERT INTO VehicleType(ID, Description)
+VALUES(905427, 'SUV');
+
+INSERT INTO VehicleType(ID, Description)
+VALUES(984463, 'motorcycle');
+
+INSERT INTO Floor(ID, buildingID, floorNumber)
+VALUES(3, 23, 3);
+
+INSERT INTO Floor(ID, buildingID, floorNumber)
+VALUES(1, 14, 1);
+
+INSERT INTO Floor(ID, buildingID, floorNumber)
+VALUES(5, 41, 5);
+
+INSERT INTO ParkingSpot(ID, FloorID, StatusID, VehicleTypeID, SpotNumber)
+VALUES(34, 3, 1, 254983, 87);
+
+INSERT INTO ParkingSpot(ID, FloorID, StatusID, VehicleTypeID, SpotNumber)
+VALUES(67, 1, 1, 905427, 85);
+
+INSERT INTO ParkingSpot(ID, FloorID, StatusID, VehicleTypeID, SpotNumber)
+VALUES(87, 5, 1, 984463, 32);

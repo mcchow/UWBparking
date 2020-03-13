@@ -17,41 +17,12 @@ public class ParkingProject
 {
     public static void main (String[] args) throws Exception {
 
-    java.util.Date sTime = new java.util.Date();
-    java.util.Date eTime = new java.util.Date();
 
     //createNewTable();
     ParkingProject app = new ParkingProject();
+    app.drivein(34234, 3, 87);
 
-    //the numbers here are temporary (just to test)
-
-    app.insertVehicle(1, "23543");
-    app.insertVehicle(2, "22343");
-    app.insertVehicle(3, "27843");
-
-    app.insertBuilding(23, "garage");
-    app.insertBuilding(14, "ground");
-    app.insertBuilding(41, "b92");
-
-    app.insertStatus(25346, "taken");
-    app.insertStatus(23498, "vacant");
-    app.insertStatus(87652, "free");
-
-    app.insertVehicleType(254983, "car");
-    app.insertVehicleType(905427, "SUV");
-    app.insertVehicleType(984463, "motorcycle");
-
-    app.insertFloor(3, 23, "3");
-    app.insertFloor(1, 14, "1");
-    app.insertFloor(5, 41, "5");
-
-    app.insertParkingSpot(34, 3, 25346, 254983, "b87");
-    app.insertParkingSpot(67, 1, 23498, 905427, "a85");
-    app.insertParkingSpot(87, 5, 87652, 984463, "b32");
-
-    app.insertParkingHistory(300, 34, 1, new Date(sTime.getTime()), new Date(eTime.getTime()));
-    app.insertParkingHistory(1, 67, 2, new Date(sTime.getTime()), new Date(eTime.getTime()));
-    app.insertParkingHistory(2, 87, 3, new Date(sTime.getTime()), new Date(eTime.getTime()));
+    //app.initialize();
 
         //app.selectAll();
  }
@@ -67,7 +38,44 @@ public class ParkingProject
         }
         return conn;
     }
- 
+
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // don't use this method, use the MySQLDB.txt script instead
+ public void initialize () {
+
+     java.util.Date sTime = new java.util.Date();
+     java.util.Date eTime = new java.util.Date();
+
+     insertVehicle(23543);
+     insertVehicle( 22343);
+     insertVehicle( 27843);
+
+     insertBuilding(23, "garage");
+     insertBuilding(14, "ground");
+     insertBuilding(41, "b92");
+
+     insertStatus(25346, "taken");
+     insertStatus(23498, "vacant");
+     insertStatus(87652, "taken");
+
+     insertVehicleType(254983, "car");
+     insertVehicleType(905427, "SUV");
+     insertVehicleType(984463, "motorcycle");
+
+     insertFloor(3, 23, "3");
+     insertFloor(1, 14, "1");
+     insertFloor(5, 41, "5");
+
+     //parking spots should be created in a for loop (there should be a bunch of them)
+     insertParkingSpot(34, 3, 1, 254983, 87);
+     insertParkingSpot(67, 1, 2, 905427, 85);
+     insertParkingSpot(87, 5, 3, 984463, 32);
+
+     insertParkingHistory(34, 1, new Date(sTime.getTime()), new Date(eTime.getTime()));
+     insertParkingHistory( 67, 2, new Date(sTime.getTime()), new Date(eTime.getTime()));
+     insertParkingHistory( 87, 3, new Date(sTime.getTime()), new Date(eTime.getTime()));
+ }
+
  public static void createNewTable() {
         // SQLite connection string
         String url = "jdbc:sqlite:C:\\Users\\ao050\\Dropbox\\Winter 2020\\CSS 475 Database System\\ParkingDB\\test.db";
@@ -107,37 +115,36 @@ public class ParkingProject
         }
     }
     
-    public void insertParkingHistory(int id, int parkingSpotID, int vID, Date sTime, Date eTime) {
-        String sql = "INSERT INTO ParkingHistory(ID, ParkingSpotID, VehicleID, startTime, endTime) VALUES(?, ?, ?, ?, ?)";
+    public void insertParkingHistory(int parkingSpotID, int vID, java.util.Date sTime, Date eTime) {
+        String sql = "INSERT INTO ParkingHistory(ParkingSpotID, VehicleID, startTime, endTime) VALUES(?, ?, ?, ?)";
  
         try (Connection conn = this.connect();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.setInt(2, parkingSpotID);
-            pstmt.setInt(3, vID);
-            pstmt.setDate(4, sTime);
-            pstmt.setDate(5, eTime);
+            pstmt.setInt(1, parkingSpotID);
+            pstmt.setInt(2, vID);
+            pstmt.setDate(3, new Date(sTime.getTime()));
+            pstmt.setDate(4, eTime);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void insertVehicle(int id, String rfID) {
-        String sql = "INSERT INTO Vehicle(ID, RFID) VALUES(?, ?)";
+    public int insertVehicle(int rfID) {
+        String sql = "INSERT INTO Vehicle(RFID) VALUES(?)";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.setString(2, rfID);
+            pstmt.setInt(1, rfID);
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return findVehicleID(rfID);
     }
 
-    public void insertParkingSpot(int id, int floorID, int sID, int vehTypeID, String spotNum) {
+    public void insertParkingSpot(int id, int floorID, int sID, int vehTypeID, int spotNum) {
         String sql = "INSERT INTO ParkingSpot(ID, FloorID, StatusID, VehicleTypeID, SpotNumber) VALUES(?, ?, ?, ?, ?)";
 
         try (Connection conn = this.connect();
@@ -146,7 +153,7 @@ public class ParkingProject
             pstmt.setInt(2, floorID);
             pstmt.setInt(3, sID);
             pstmt.setInt(4, vehTypeID);
-            pstmt.setString(5, spotNum);
+            pstmt.setInt(5, spotNum);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -224,8 +231,46 @@ public class ParkingProject
             System.out.println(e.getMessage());
         }
     }
-    
-    
+
+    //a method that is called when a car parks in one of the parking spots
+    public void drivein(int rfid, int floor, int spotNumber) {
+            int id = insertVehicle(rfid);
+            if (id != -1) {
+                insertParkingHistory(spotNumber, id, new java.util.Date(), null);
+                updateStatus(floor, spotNumber, 2);
+            }
+    }
+
+    public void updateStatus(int floor, int spotNumber, int status) {
+        String sql = "UPDATE ParkingSpot SET StatusID = ? WHERE FloorID = ? AND SpotNumber = ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, status);
+            pstmt.setInt(2, floor);
+            pstmt.setInt(3, spotNumber);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public int findVehicleID(int rfID) {
+        String sql = "SELECT id FROM Vehicle WHERE rfID = ?";
+
+        try {
+            Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, rfID);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return -1;
+    }
 }
     
  
