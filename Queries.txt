@@ -1,0 +1,110 @@
+-- show available parking spots
+SELECT Building.name, Floor.FloorNumber, SpotNumber
+FROM ParkingSpot
+  JOIN Floor on (Floor.id = ParkingSpot.floorId)
+  JOIN Status ON (Status.id = ParkingSpot.statusId)
+  JOIN Building ON (Building.id = floor.buildingId)
+Where status.description = 'Available';
+
+
+-- show all available parking spots at a specific time
+--user specifies 'Time'
+SELECT Building.name, Floor.FloorNumber, SpotNumber
+FROM ParkingSpot
+  JOIN Floor on (Floor.id = ParkingSpot.floorId)
+  JOIN Status ON (Status.id = ParkingSpot.statusId)
+  JOIN ParkingHistory ON (ParkingSpot.id = ParkingHistory.id)
+  JOIN Building ON (Building.id = floor.buildingId)
+Where StartTime < Time AND EndTime > Time AND status.description = 'Available';
+
+
+
+-- show how many spots available in a specific building
+-- User specifies 'SelectedBuilding' 
+
+SELECT Building.name, Floor.FloorNumber, COUNT(SpotNumber) AS Available
+FROM ParkingSpot
+  JOIN Floor on (Floor.id = ParkingSpot.floorId)
+  JOIN Status ON (Status.id = ParkingSpot.statusId)
+  JOIN Building ON (Building.id = floor.buildingId)
+Where status.description = 'Available' AND Building.name = SelectedBuilding;
+
+
+
+-- show how many spots available in a specific building at a specific time
+--user specify 'Time' and 'SelectedBuilding' 
+
+SELECT Building.name, COUNT(*) AS Available
+FROM ParkingSpot
+  JOIN Floor on (Floor.id = ParkingSpot.floorId)
+  JOIN Status ON (Status.id = ParkingSpot.statusId)
+  JOIN ParkingHistory ON (ParkingSpot.id = ParkingHistory.id)
+Where StartTime < Time AND EndTime > Time AND status.description = 'Available' AND Building.name = SelectedBuilding;
+
+
+
+-- show the most frequently used parking spot
+
+SELECT Floor.buildingID, Floor.FloorNumber, SpotNumber, COUNT(*) AS Frequency
+FROM ParkingHistory
+  JOIN parkingSpot ON (ParkingSpot.ID = parkingHistory.parkingSpotID)
+  JOIN Floor on (Floor.id = ParkingSpot.floorId)
+  JOIN Status ON (Status.id = ParkingSpot.statusId)
+GROUP BY ParkingSpotID
+ORDER BY Frequency DESC
+LIMIT 1;
+
+
+
+-- show the most frequently used floor of a specific building
+-- User specifies 'SelectedBuilding' 
+
+SELECT Building.name, Floor.FloorNumber, COUNT(*) AS Frequency
+FROM ParkingHistory
+  JOIN parkingSpot ON (ParkingSpot.ID = parkingHistory.parkingSpotID)
+  JOIN Floor on (Floor.id = ParkingSpot.floorId)
+  JOIN Status ON (Status.id = ParkingSpot.statusId)
+  JOIN Building ON (Building.id = floor.buildingId)
+WHERE Building.name = SelectedBuilding
+GROUP BY Floor.floorNumber
+ORDER BY Frequency DESC
+LIMIT 1;
+
+
+
+--Show the most frequently used building
+
+SELECT Building.name, COUNT(*) AS Frequency
+FROM ParkingHistory
+  JOIN parkingSpot ON (ParkingSpot.ID = parkingHistory.parkingSpotID)
+  JOIN Floor on (Floor.id = ParkingSpot.floorId)
+  JOIN Status ON (Status.id = ParkingSpot.statusId)
+  JOIN Building ON (Building.id = floor.buildingId)
+GROUP BY Building.id
+ORDER BY Frequency DESC
+LIMIT 1;
+
+
+
+--Show dates and frequency where all the parking spots were Occupied or Unavailable
+
+-- To do
+
+
+
+
+
+-- show mostcommon type of vehicles parked on compus
+SELECT VehicleType.description AS MostCommonType, COUNT(*) AS Frequency
+FROM ParkingHistory
+   JOIN ParkingSpot ON (ParkingHistory.parkingSpotId = parkingSpot.Id)
+   JOIN VehicleType ON (VehicleType.ID = ParkingSpot.vehicleTypeId)
+GROUP BY VehicleType.Id
+ORDER BY Frequency;
+
+
+
+
+
+
+
