@@ -85,10 +85,18 @@ LIMIT 1;
 
 
 
---Show dates and frequency where all the parking spots were Occupied or Unavailable
+-- Show the most parked building between Time1 and Time2
+-- User specifies 'Time1' and 'Time2'
 
--- To do
-
+SELECT Building.name, COUNT(*) AS Frequency
+FROM ParkingHistory
+  JOIN parkingSpot ON (ParkingSpot.ID = parkingHistory.parkingSpotID)
+  JOIN Floor on (Floor.id = ParkingSpot.floorId)
+  JOIN Building ON (Building.id = Floor.buildingId)
+WHERE Time1 >= startTime, Time2 < endTime
+GROUP BY ParkingSpotID
+ORDER BY Frequency DESC
+LIMIT 1;
 
 
 
