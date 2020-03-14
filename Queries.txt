@@ -39,17 +39,18 @@ FROM ParkingSpot
   JOIN Floor on (Floor.id = ParkingSpot.floorId)
   JOIN Status ON (Status.id = ParkingSpot.statusId)
   JOIN ParkingHistory ON (ParkingSpot.id = ParkingHistory.id)
+  JOIN Building ON (Building.id = Floor.buildingId)
 Where StartTime < Time AND EndTime > Time AND status.description = 'Available' AND Building.name = SelectedBuilding;
 
 
 
 -- show the most frequently used parking spot
 
-SELECT Floor.buildingID, Floor.FloorNumber, SpotNumber, COUNT(*) AS Frequency
+SELECT Building.name, Floor.FloorNumber, SpotNumber, COUNT(*) AS Frequency
 FROM ParkingHistory
   JOIN parkingSpot ON (ParkingSpot.ID = parkingHistory.parkingSpotID)
   JOIN Floor on (Floor.id = ParkingSpot.floorId)
-  JOIN Status ON (Status.id = ParkingSpot.statusId)
+  JOIN Building ON (Building.id = Floor.buildingId)
 GROUP BY ParkingSpotID
 ORDER BY Frequency DESC
 LIMIT 1;
@@ -63,7 +64,6 @@ SELECT Building.name, Floor.FloorNumber, COUNT(*) AS Frequency
 FROM ParkingHistory
   JOIN parkingSpot ON (ParkingSpot.ID = parkingHistory.parkingSpotID)
   JOIN Floor on (Floor.id = ParkingSpot.floorId)
-  JOIN Status ON (Status.id = ParkingSpot.statusId)
   JOIN Building ON (Building.id = floor.buildingId)
 WHERE Building.name = SelectedBuilding
 GROUP BY Floor.floorNumber
@@ -78,7 +78,6 @@ SELECT Building.name, COUNT(*) AS Frequency
 FROM ParkingHistory
   JOIN parkingSpot ON (ParkingSpot.ID = parkingHistory.parkingSpotID)
   JOIN Floor on (Floor.id = ParkingSpot.floorId)
-  JOIN Status ON (Status.id = ParkingSpot.statusId)
   JOIN Building ON (Building.id = floor.buildingId)
 GROUP BY Building.id
 ORDER BY Frequency DESC
@@ -101,6 +100,7 @@ FROM ParkingHistory
    JOIN VehicleType ON (VehicleType.ID = ParkingSpot.vehicleTypeId)
 GROUP BY VehicleType.Id
 ORDER BY Frequency;
+
 
 
 
