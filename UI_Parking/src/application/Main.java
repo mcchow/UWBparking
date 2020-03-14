@@ -242,7 +242,7 @@ public class Main extends Application {
 		        					"  JOIN Status ON (Status.id = ParkingSpot.statusId)\r\n" + 
 		        					"  JOIN ParkingHistory ON (ParkingSpot.id = ParkingHistory.id)\r\n" + 
 		        					"  JOIN Building ON (Building.id = floor.buildingId)\r\n" + 
-		        					"Where StartTime < "+ cb.getPromptText() + " AND EndTime > " + cb.getPromptText() + " AND status.description = 'Available';");
+		        					"Where StartTime < '"+ cb.getPromptText() + "' AND EndTime > '" + cb.getPromptText() + "' AND status.description = 'Available';");
 		        			result.getItems().clear();
 		        			while(rs.next())  {
 		        				result.getItems().add("Building: " + rs.getString(1)+" Floor: "+rs.getInt(2)+"  SpotID: "+rs.getInt(3));  
@@ -371,7 +371,7 @@ public class Main extends Application {
 		        					"  JOIN Status ON (Status.id = ParkingSpot.statusId)\r\n" + 
 		        					"  JOIN Building ON (Building.id = floor.buildingId)\r\n" + 
 		        					"Where status.description = 'Available' AND Building.name = \""+ (String)cb.getValue() + "\""+
-		        					"StartTime < "+ cb2.getPromptText() + " AND EndTime > " + cb2.getPromptText() +";\r\n"
+		        					"StartTime < '"+ cb2.getPromptText() + "' AND EndTime > '" + cb2.getPromptText() +"';\r\n"
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
