@@ -239,10 +239,9 @@ public class Main extends Application {
 		        			ResultSet rs=stmt.executeQuery("SELECT Building.name, Floor.FloorNumber, SpotNumber\r\n" + 
 		        					"FROM ParkingSpot\r\n" + 
 		        					"  JOIN Floor on (Floor.id = ParkingSpot.floorId)\r\n" + 
-		        					"  JOIN Status ON (Status.id = ParkingSpot.statusId)\r\n" + 
 		        					"  JOIN ParkingHistory ON (ParkingSpot.id = ParkingHistory.id)\r\n" + 
 		        					"  JOIN Building ON (Building.id = floor.buildingId)\r\n" + 
-		        					"Where StartTime < '"+ cb.getText() + "' AND EndTime > '" + cb.getText() + "' AND status.description = 'Available';");
+		        					"Where StartTime >= '"+ cb.getText()+"' OR EndTime <= '"+ cb.getText()+ "';");
 		        			result.getItems().clear();
 		        			while(rs.next())  {
 		        				result.getItems().add("Building: " + rs.getString(1)+" Floor: "+rs.getInt(2)+"  SpotID: "+rs.getInt(3));  
@@ -365,18 +364,16 @@ public class Main extends Application {
 		        			//run query
 		        			Statement stmt=con.createStatement();
 		        			//stmt.executeQuery("Insert Into Status (ID,Description) Value(3,'noonecare');");  
-		        			ResultSet rs=stmt.executeQuery("SELECT Floor.FloorNumber, COUNT(SpotNumber) AS Available\r\n" + 
-		        					"FROM ParkingSpot\r\n" + 
-		        					"  JOIN Floor on (Floor.id = ParkingSpot.floorId)\r\n" + 
-		        					"  JOIN Status ON (Status.id = ParkingSpot.statusId)\r\n" + 
-		        					"  JOIN Building ON (Building.id = floor.buildingId)\r\n" + 
-		        					"Where status.description = 'Available' AND Building.name = \""+ (String)cb.getValue() + "\""+
-		        					"StartTime < '"+ cb2.getPromptText() + "' AND EndTime > '" + cb2.getPromptText() +"';\r\n"
-		        					);
+		        			ResultSet rs=stmt.executeQuery("SELECT Building.name, COUNT(*) AS Available\r\n" + 
+                                    "FROM ParkingSpot\r\n" + 
+                                    "  JOIN Floor on (Floor.id = ParkingSpot.floorId)\r\n" + 
+                                    "  JOIN ParkingHistory ON (ParkingSpot.id = ParkingHistory.id)\r\n" +
+                                    "  JOIN Building ON (Building.id = floor.buildingId)\r\n" +
+                                    "Where (StartTime >= '"+ cb2.getText()+"' OR EndTime <= '"+ cb2.getText()+"') AND Building.name = '"+ cb.getValue()+"';");
 		        			String resulttext = "";
 		        			while(rs.next())  {
-		        				resulttext+="Floor: "+rs.getInt(1)+"  remaining spaces: "+rs.getInt(2) +"\n";  
-		        			}
+                                resulttext+="building: "+cb.getValue()+"  remain space: "+rs.getInt(2) +"\n";
+                            }
 		        			result.setText(resulttext);
 		        			con.close();  
 		        			}catch(Exception e){ System.out.println(e);}  
