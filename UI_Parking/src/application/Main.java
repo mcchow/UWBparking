@@ -43,7 +43,7 @@ public class Main extends Application {
 			Scene scene;
 			ArrayList<Button> Hboxbutton = new ArrayList<Button>();
 			Button btn1 = new Button();
-	        btn1.setText("find space");
+	        btn1.setText("View all available parking of a building");
 	        btn1.setOnAction(new EventHandler<ActionEvent>() {
 	       	 
 	            @Override
@@ -53,7 +53,7 @@ public class Main extends Application {
 	        });
 	        
 			Button btn2 = new Button();
-			btn2.setText("find space by time");
+			btn2.setText("View available parking statistics from the past");
 			btn2.setOnAction(new EventHandler<ActionEvent>() {
 				 
 	            @Override
@@ -65,7 +65,7 @@ public class Main extends Application {
 	        });
 
 			Button btn3 = new Button();
-	        btn3.setText("number of avalible space");
+	        btn3.setText("View number of available parking: search by building");
 	        btn3.setOnAction(new EventHandler<ActionEvent>() {
 	       	 
 	            @Override
@@ -75,7 +75,7 @@ public class Main extends Application {
 	            }
 	        });
 			Button btn4 = new Button();
-	        btn4.setText("find space time");
+	        btn4.setText("View available parking statistics from the past: search by building");
 	        btn4.setOnAction(new EventHandler<ActionEvent>() {
 		       	 
 	            @Override
@@ -85,7 +85,7 @@ public class Main extends Application {
 	            }
 	        });
 			Button btn5 = new Button();
-	        btn5.setText("find max parking");
+	        btn5.setText("Most frequently used parking spots");
 	        btn5.setOnAction(new EventHandler<ActionEvent>() {
 		       	 
 	            @Override
@@ -95,7 +95,7 @@ public class Main extends Application {
 	        });
 	        
 	        Button btn6 = new Button();
-	        btn6.setText("find max parked floor");
+	        btn6.setText("Most frequently used floors");
 	        btn6.setOnAction(new EventHandler<ActionEvent>() {
 		       	 
 	            @Override
@@ -105,7 +105,7 @@ public class Main extends Application {
 	        });
 	        
 	        Button btn7 = new Button();
-	        btn7.setText("find max parked building");
+	        btn7.setText("Most frequently used building");
 	        btn7.setOnAction(new EventHandler<ActionEvent>() {
 		       	 
 	            @Override
@@ -115,7 +115,7 @@ public class Main extends Application {
 	        });
 	        
 	        Button btn8 = new Button();
-	        btn8.setText("find common car type");
+	        btn8.setText("Most common type of vehicles");
 	        btn8.setOnAction(new EventHandler<ActionEvent>() {
 		       	 
 	            @Override
@@ -242,7 +242,7 @@ public class Main extends Application {
 		        					"  JOIN Status ON (Status.id = ParkingSpot.statusId)\r\n" + 
 		        					"  JOIN ParkingHistory ON (ParkingSpot.id = ParkingHistory.id)\r\n" + 
 		        					"  JOIN Building ON (Building.id = floor.buildingId)\r\n" + 
-		        					"Where StartTime < '"+ cb.getPromptText() + "' AND EndTime > '" + cb.getPromptText() + "' AND status.description = 'Available';");
+		        					"Where StartTime < '"+ cb.getText() + "' AND EndTime > '" + cb.getText() + "' AND status.description = 'Available';");
 		        			result.getItems().clear();
 		        			while(rs.next())  {
 		        				result.getItems().add("Building: " + rs.getString(1)+" Floor: "+rs.getInt(2)+"  SpotID: "+rs.getInt(3));  
@@ -309,7 +309,7 @@ public class Main extends Application {
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
-		        				resulttext+="Floor: "+rs.getInt(1)+"  remain space: "+rs.getInt(2) +"\n";  
+		        				resulttext+="Floor: "+rs.getInt(1)+"  remaining spaces: "+rs.getInt(2) +"\n";  
 		        			}
 		        			result.setText(resulttext);
 		        			con.close();  
@@ -375,7 +375,7 @@ public class Main extends Application {
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
-		        				resulttext+="Floor: "+rs.getInt(1)+"  remain space: "+rs.getInt(2) +"\n";  
+		        				resulttext+="Floor: "+rs.getInt(1)+"  remaining spaces: "+rs.getInt(2) +"\n";  
 		        			}
 		        			result.setText(resulttext);
 		        			con.close();  
