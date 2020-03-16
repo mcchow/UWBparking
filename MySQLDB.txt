@@ -112,13 +112,26 @@ INSERT INTO VehicleType(ID, Description)
 VALUES(984463, 'motorcycle');
 
 INSERT INTO Floor(ID, buildingID, floorNumber)
+VALUES(1, 23, 1);
+
+INSERT INTO Floor(ID, buildingID, floorNumber)
+VALUES(2, 23, 2);
+
+INSERT INTO Floor(ID, buildingID, floorNumber)
 VALUES(3, 23, 3);
 
 INSERT INTO Floor(ID, buildingID, floorNumber)
-VALUES(1, 14, 1);
+VALUES(21, 14, 1);
 
-INSERT INTO ParkingSpot(ID, FloorID, StatusID, VehicleTypeID, SpotNumber)
-VALUES(34, 3, 1, 254983, 87);
+INSERT INTO Floor(ID, buildingID, floorNumber)
+VALUES(22, 14, 2);
 
-INSERT INTO ParkingSpot(ID, FloorID, StatusID, VehicleTypeID, SpotNumber)
-VALUES(67, 1, 1, 905427, 85);
+INSERT INTO Floor(ID, buildingID, floorNumber)
+VALUES(23, 14, 3);
+
+INSERT INTO Floor(ID, buildingID, floorNumber)
+VALUES(24, 14, 4);
+
+INSERT INTO Floor(ID, buildingID, floorNumber)
+VALUES(25, 14, 5);
+

@@ -20,12 +20,57 @@ public class ParkingProject
 
     //createNewTable();
     ParkingProject app = new ParkingProject();
+    for (int i = 1; i < 40; i++) {
+    	app.insertParkingSpot(34+i, 1, 1, 254983, i);
+    }
+    for (int i = 40; i < 50; i++) {
+    	app.insertParkingSpot(34+i, 1, 1, 984463, i);
+    }
+    for (int i = 1; i < 50; i++) {
+    	app.insertParkingSpot(84+i, 2, 1, 254983, i);
+    }
+    for (int i = 1; i < 50; i++) {
+    	app.insertParkingSpot(134+i, 3, 1, 254983, i);
+    }  
+    for (int i = 1; i < 40; i++) {
+    	app.insertParkingSpot(184+i, 21, 1, 254983, i);
+    } 
+    for (int i = 40; i < 50; i++) {
+    	app.insertParkingSpot(184+i, 21, 1, 984463, i);
+    } 
+    for (int i = 1; i < 50; i++) {
+    	app.insertParkingSpot(234+i, 22, 1, 254983, i);
+    } 
+    for (int i = 1; i < 50; i++) {
+    	app.insertParkingSpot(284+i, 23, 1, 254983, i);
+    } 
+    for (int i = 1; i < 50; i++) {
+    	app.insertParkingSpot(334+i, 24, 1, 905427, i);
+    } 
+    for (int i = 1; i < 50; i++) {
+    	app.insertParkingSpot(384+i, 25, 1, 905427, i);
+    } 
+    
     app.drivein(34234, 3, 67);
     Thread.sleep(3000);
     app.driveout(34234, 3, 67);
-    app.drivein(34234, 3, 34);
+    app.drivein(34234, 3, 35);
     Thread.sleep(3000);
-    app.driveout(34234, 3, 34);
+    app.driveout(34234, 3, 35);
+    
+    app.drivein(56322, 23, 286);
+    Thread.sleep(3000);
+    app.driveout(56322, 23, 286);
+    
+    app.drivein(11111, 24, 340);
+    Thread.sleep(3000);
+    app.driveout(11111, 24, 340);
+    app.drivein(45620, 24, 341);
+    Thread.sleep(3000);
+    app.driveout(45620, 24, 341);
+    app.drivein(12345, 25, 390);
+    Thread.sleep(3000);
+    app.driveout(12345, 25, 390);
     //app.initialize();
 
         //app.selectAll();
