@@ -155,7 +155,7 @@ public class Main extends Application {
 	        btn.setLayoutY(200);
 	        // only 2 location is need
 	        ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(
-	        	    "garage", "ground")
+	        	    "A", "B")
 	        	);
 	        cb.setLayoutX(50);
 	        cb.setLayoutY(200);
@@ -279,7 +279,7 @@ public class Main extends Application {
 		        btn.setLayoutY(200);
 		        // only 2 location is need
 		        ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(
-		        	    "garage", "ground")
+		        	    "A", "B")
 		        	);
 		        cb.setLayoutX(50);
 		        cb.setLayoutY(200);
@@ -341,7 +341,7 @@ public class Main extends Application {
 		        btn.setLayoutY(200);
 		        // only 2 location is need
 		        ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(
-		        	    "garage", "ground")
+		        	    "A", "B")
 		        	);
 		        cb.setLayoutX(50);
 		        cb.setLayoutY(200);
@@ -459,7 +459,7 @@ public class Main extends Application {
 				result.setX(50);
 				result.setY(100);
 		        ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(
-		        	    "garage", "ground")
+		        	    "A", "B")
 		        	);
 		        cb.setLayoutX(50);
 		        cb.setLayoutY(200);
