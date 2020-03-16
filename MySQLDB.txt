@@ -88,13 +88,10 @@ INSERT INTO Vehicle(RFID)
 VALUES(27843);
 
 INSERT INTO Building(ID, name)
-VALUES(23, 'garage');
+VALUES(23, 'A');
 
 INSERT INTO Building(ID, name)
-VALUES(14, 'ground');
-
-INSERT INTO Building(ID, name)
-VALUES(41, 'b92');
+VALUES(14, 'B');
 
 INSERT INTO Status(ID, Description)
 VALUES(1, 'Available');
@@ -120,14 +117,8 @@ VALUES(3, 23, 3);
 INSERT INTO Floor(ID, buildingID, floorNumber)
 VALUES(1, 14, 1);
 
-INSERT INTO Floor(ID, buildingID, floorNumber)
-VALUES(5, 41, 5);
-
 INSERT INTO ParkingSpot(ID, FloorID, StatusID, VehicleTypeID, SpotNumber)
 VALUES(34, 3, 1, 254983, 87);
 
 INSERT INTO ParkingSpot(ID, FloorID, StatusID, VehicleTypeID, SpotNumber)
 VALUES(67, 1, 1, 905427, 85);
-
-INSERT INTO ParkingSpot(ID, FloorID, StatusID, VehicleTypeID, SpotNumber)
-VALUES(87, 5, 1, 984463, 32);

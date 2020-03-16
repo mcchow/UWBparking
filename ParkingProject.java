@@ -20,8 +20,12 @@ public class ParkingProject
 
     //createNewTable();
     ParkingProject app = new ParkingProject();
-    app.drivein(34234, 3, 87);
-
+    app.drivein(34234, 3, 67);
+    Thread.sleep(3000);
+    app.driveout(34234, 3, 67);
+    app.drivein(34234, 3, 34);
+    Thread.sleep(3000);
+    app.driveout(34234, 3, 34);
     //app.initialize();
 
         //app.selectAll();
@@ -29,7 +33,7 @@ public class ParkingProject
  
  private Connection connect() {
         // SQLite connection string
-        String url = "jdbc:mysql://localhost:3306/Parking_Database";
+        String url = "jdbc:mysql://localhost:3306/UWB_Parking";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url, "root", "UWBParkingSystem");
@@ -115,15 +119,28 @@ public class ParkingProject
         }
     }
     
-    public void insertParkingHistory(int parkingSpotID, int vID, java.util.Date sTime, Date eTime) {
+    public void insertParkingHistory(int parkingSpotID, int vID, java.util.Date sTime, java.util.Date eTime) {
         String sql = "INSERT INTO ParkingHistory(ParkingSpotID, VehicleID, startTime, endTime) VALUES(?, ?, ?, ?)";
  
         try (Connection conn = this.connect();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, parkingSpotID);
             pstmt.setInt(2, vID);
-            pstmt.setDate(3, new Date(sTime.getTime()));
-            pstmt.setDate(4, eTime);
+            pstmt.setDate(3, sTime == null ? null : new Date(sTime.getTime()));
+            pstmt.setDate(4, eTime == null ? null : new Date(eTime.getTime()));
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void updateParkingHistory(int parkingSpotID, java.util.Date eTime) {
+        String sql = "UPDATE ParkingHistory set endTime = ? WHERE ParkingSpotID = ?";
+ 
+        try (Connection conn = this.connect();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setDate(1, new Date(eTime.getTime()));
+            pstmt.setInt(2, parkingSpotID);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -239,6 +256,12 @@ public class ParkingProject
                 insertParkingHistory(spotNumber, id, new java.util.Date(), null);
                 updateStatus(floor, spotNumber, 2);
             }
+    }
+
+    //a method that is called when a car parks in one of the parking spots
+    public void driveout(int rfid, int floor, int spotNumber) {
+                updateParkingHistory(spotNumber, new java.util.Date());
+                updateStatus(floor, spotNumber, 1);
     }
 
     public void updateStatus(int floor, int spotNumber, int status) {
