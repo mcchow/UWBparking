@@ -336,7 +336,7 @@ public class Main extends Application {
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
-		        				resulttext+="Floor: "+rs.getInt(1)+"  remaining spaces: "+rs.getInt(2) +"\n";  
+		        				resulttext+="Building: "+(String)cb.getValue()+"  remaining spaces: "+rs.getInt(2) +"\n";  
 		        			}
 		        			result.setText(resulttext);
 		        			con.close();  
@@ -456,7 +456,7 @@ public class Main extends Application {
 		        					"  JOIN Building ON (Building.id = Floor.buildingId)\r\n" + 
 		        					"GROUP BY ParkingSpotID\r\n" + 
 		        					"ORDER BY Frequency DESC\r\n" + 
-		        					"LIMIT 1;"
+		        					"LIMIT 5;"
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
@@ -517,9 +517,9 @@ public class Main extends Application {
 		        					"  JOIN Floor on (Floor.id = ParkingSpot.floorId)\r\n" + 
 		        					"  JOIN Building ON (Building.id = floor.buildingId)\r\n" + 
 		        					"WHERE Building.name = \""+ cb.getValue() +"\"\r\n" + 
-		        					"GROUP BY Floor.floorNumber\r\n" + 
+		        					"GROUP BY Floor.ID\r\n" + 
 		        					"ORDER BY Frequency DESC\r\n" + 
-		        					"LIMIT 1;"
+		        					"LIMIT 5;"
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
@@ -578,7 +578,7 @@ public class Main extends Application {
 		        					"  JOIN Building ON (Building.id = floor.buildingId)\r\n" + 
 		        					"GROUP BY Building.id\r\n" + 
 		        					"ORDER BY Frequency DESC\r\n" + 
-		        					"LIMIT 1;"
+		        					"LIMIT 5;"
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
