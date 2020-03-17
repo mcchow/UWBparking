@@ -18,15 +18,21 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -144,28 +150,51 @@ public class Main extends Application {
 	//creating page for finding space
 	public Pane findplace() {
 		try {
-			//create all element
+	        Pane root = new Pane(); 
+
+	        //create all element
 			Button btn = new Button();
-			Text result = new Text();
-			result.setX(100);
-			result.setY(200);
-			
+	 
 	        btn.setText("avalible space");
 	        btn.setLayoutX(130);
-	        btn.setLayoutY(200);
+	        btn.setLayoutY(400);
 	        // only 2 location is need
 	        ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(
 	        	    "A", "B")
 	        	);
 	        cb.setLayoutX(50);
-	        cb.setLayoutY(200);
+	        cb.setLayoutY(400);
+	        
 	        btn.setOnAction(new EventHandler<ActionEvent>() {
 	 
 	            @Override
 	            public void handle(ActionEvent event) {
 	            	//the query
 	            	try{  
-	        			Class.forName("com.mysql.cj.jdbc.Driver");
+	        			TableView table = new TableView();
+	        			
+	        	        TableColumn floor = new TableColumn("Floor");
+	        	        floor.setMinWidth(50);
+	        	        floor.setCellValueFactory(
+	        	                new PropertyValueFactory<ParkingSpot, String>("floor"));
+
+	        	        TableColumn parkingSpot = new TableColumn("Parking Spot");
+	        	        parkingSpot.setMinWidth(100);
+	        	        parkingSpot.setCellValueFactory(
+	        	                new PropertyValueFactory<ParkingSpot, String>("parkingSpot"));
+	        	        
+	        	        table.getColumns().addAll(floor, parkingSpot);
+	        	 
+	        	        final VBox vbox = new VBox();
+	        	        vbox.setSpacing(5);
+	        	        vbox.setPadding(new Insets(0, 0, 0, 0));
+	        	        vbox.getChildren().add(table);
+
+	        	        ObservableList<ParkingSpot> data =
+	        	                FXCollections.observableArrayList();
+	        	        table.setItems(data);
+
+	        	        Class.forName("com.mysql.cj.jdbc.Driver");
 	        			//the first thing is the host id, plz also put serverTimezone=UTC to set up srever time. 
 	        			//root is the name of the user, password 123456 , 
 	        			Connection con=DriverManager.getConnection(  
@@ -175,26 +204,25 @@ public class Main extends Application {
 	        			//run query
 	        			Statement stmt=con.createStatement();
 	        			//stmt.executeQuery("Insert Into Status (ID,Description) Value(3,'noonecare');");  
-	        			ResultSet rs=stmt.executeQuery("SELECT Floor.FloorNumber, SpotNumber\r\n" + 
-	        					"FROM ParkingSpot\r\n" + 
-	        					"  JOIN Floor on (Floor.id = ParkingSpot.floorId)\r\n" + 
-	        					"  JOIN Status ON (Status.id = ParkingSpot.statusId)\r\n" + 
-	        					"  JOIN Building ON (Building.id = floor.buildingId)\r\n" + 
-	        					"Where status.description = 'Available' AND Building.name = \""+ (String)cb.getValue()+"\" LIMIT 1;\r\n"
+	        			ResultSet rs=stmt.executeQuery("SELECT Floor.FloorNumber, SpotNumber " + 
+	        					"FROM ParkingSpot " + 
+	        					"  JOIN Floor on (Floor.id = ParkingSpot.floorId) " + 
+	        					"  JOIN Status ON (Status.id = ParkingSpot.statusId) " + 
+	        					"  JOIN Building ON (Building.id = floor.buildingId) " + 
+	        					"Where status.description = 'Available' AND Building.name = \""+ (String)cb.getValue()+"\";"
 	        					);
-	        			if(rs.next())  {
-	        				result.setText("Floor: "+rs.getInt(1)+"  SpotID: "+rs.getInt(2));  
+	        			while(rs.next()) {
+	        				data.add(new ParkingSpot(new Integer(rs.getInt(1)).toString(), new Integer(rs.getInt(2)).toString()));  
 	        			}
-	        			else {result.setText("no space in this building");}
-	        			while(rs.next());
+	        	        root.getChildren().add(vbox);
 	        			con.close();  
-	        			}catch(Exception e){ System.out.println(e);}  
+	        		} catch (Exception e) { 
+	        			System.out.println(e);
+	        		}  
 	            }
 	        });
 	        
-	        Pane root = new Pane(); 
 			root.getChildren().add(btn);  
-			root.getChildren().add(result);  
 			root.getChildren().add(cb);
 			return root;
 		} catch(Exception e) {
@@ -628,6 +656,27 @@ public class Main extends Application {
 			
 			return new Pane();
 		}
+	public static class ParkingSpot {
+		private final SimpleStringProperty floor;
+		private final SimpleStringProperty parkingSpot;
+        private ParkingSpot(String floor, String parkingSpot) {
+            this.floor = new SimpleStringProperty(floor);
+            this.parkingSpot = new SimpleStringProperty(parkingSpot);
+        }
+		public String getFloor() {
+			return floor.get();
+		}
+		public String getParkingSpot() {
+			return parkingSpot.get();
+		}
+		public void setFloor(String strFloor) {
+			floor.set(strFloor);
+		}
+		public void setParkingSpot(String strParkingSpot) {
+			parkingSpot.set(strParkingSpot);
+		}
+	}
+
 	public static void main(String[] args) {
 		launch(args);
 	}
