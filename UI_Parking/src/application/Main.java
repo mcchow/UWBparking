@@ -81,7 +81,7 @@ public class Main extends Application {
 	            }
 	        });
 			Button btn4 = new Button();
-	        btn4.setText("View available parking statistics from the past: search by building");
+	        btn4.setText("View number of available parking from the past: search by building");
 	        btn4.setOnAction(new EventHandler<ActionEvent>() {
 		       	 
 	            @Override
