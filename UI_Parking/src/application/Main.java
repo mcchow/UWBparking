@@ -497,7 +497,7 @@ public class Main extends Application {
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
-		        				resulttext+="Building: "+rs.getString(1)+"  Floor: "+rs.getInt(2) +"  Spotnumber: "+rs.getInt(3) +"\n";  
+		        				resulttext+="Building: "+rs.getString(1)+"  Floor: "+rs.getInt(2) +"  Spotnumber: "+rs.getInt(3)+"  Frequency: "+rs.getInt(4) +"\n";  
 		        			}
 		        			result.setText(resulttext);
 		        			con.close();  
@@ -560,7 +560,7 @@ public class Main extends Application {
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
-		        				resulttext+="Building: "+rs.getString(1)+"  Floor: "+rs.getInt(2) +"  frequency: "+rs.getInt(3) +"\n";  
+		        				resulttext+="Building: "+rs.getString(1)+"  Floor: "+rs.getInt(2) +"  Frequency: "+rs.getInt(3) +"\n";  
 		        			}
 		        			result.setText(resulttext);
 		        			con.close();  
@@ -619,7 +619,7 @@ public class Main extends Application {
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
-		        				resulttext+="Building: "+rs.getString(1)+"  Number: "+rs.getInt(2) +"\n";  
+		        				resulttext+="Building: "+rs.getString(1)+"  Frequency: "+rs.getInt(2) +"\n";  
 		        			}
 		        			result.setText(resulttext);
 		        			con.close();  
