@@ -11,6 +11,7 @@
  * */
 package application;
 	
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -26,6 +27,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
@@ -33,6 +36,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -45,8 +50,18 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			File file = new File("C:\\Users\\HK\\eclipse-workspace\\TEST\\src\\application\\dog.png");
+			String localUrl = file.toURI().toURL().toString();
+		      // don't load in the background
+		    Image localImage = new Image(localUrl, false);
+		    ImageView imageView = new ImageView(localImage);
+		    imageView.setFitHeight(200);
+		    imageView.setFitWidth(200);
+		    //imageView.setScaleX(0.5);
+		    //imageView.setScaleY(0.5);
 			BorderPane root = new BorderPane();
 			Scene scene;
+			root.setStyle("-fx-background-color: #FFFFFF;");
 			ArrayList<Button> Hboxbutton = new ArrayList<Button>();
 			Button btn1 = new Button();
 	        btn1.setText("View all available parking of a building");
@@ -111,7 +126,7 @@ public class Main extends Application {
 	        });
 	        
 	        Button btn7 = new Button();
-	        btn7.setText("Most frequently used building");
+	        btn7.setText("Most frequently used buildings");
 	        btn7.setOnAction(new EventHandler<ActionEvent>() {
 		       	 
 	            @Override
@@ -132,11 +147,11 @@ public class Main extends Application {
 	        
 			VBox vbox = new VBox();
 			vbox.setSpacing(10);
-			vbox.getChildren().addAll(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8);
+			vbox.getChildren().addAll(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,imageView);
 			
 			root.setLeft(vbox);
 			root.setCenter(findplace());
-			scene = new Scene(root,700,700);
+			scene = new Scene(root,900,600);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 	        primaryStage.setTitle("UWBParking");
 			primaryStage.setScene(scene);
@@ -533,18 +548,20 @@ public class Main extends Application {
 		public Pane mostparkinbuilding() {
 			try {
 				//create all element
+		        Pane root = new Pane();
 				Button btn = new Button();
 				Text result = new Text();
+				PieChart pieChart = new PieChart();
 				result.setX(50);
 				result.setY(100);
 		        ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(
 		        	    "A", "B")
 		        	);
 		        cb.setLayoutX(50);
-		        cb.setLayoutY(200);
+		        cb.setLayoutY(10);
 		        btn.setText("max floor");
 		        btn.setLayoutX(200);
-		        btn.setLayoutY(200);
+		        btn.setLayoutY(10);
 		        // only 2 location is need
 		        btn.setOnAction(new EventHandler<ActionEvent>() {
 		 
@@ -573,16 +590,23 @@ public class Main extends Application {
 		        					"LIMIT 5;"
 		        					);
 		        			String resulttext = "";
+		        			ObservableList<Data> answer = FXCollections.observableArrayList();
 		        			while(rs.next())  {
-		        				resulttext+="Building: "+rs.getString(1)+"  Floor: "+rs.getInt(2) +"  Frequency: "+rs.getInt(3) +"\n";  
+		        				resulttext+="Building: "+rs.getString(1)+"  Floor: "+rs.getInt(2) +"  Frequency: "+rs.getInt(3) +"\n";
+		        				answer.add(new PieChart.Data("Building "+rs.getString(1)+"/Floor "+rs.getInt(2),rs.getInt(3)));
 		        			}
+		        			pieChart.setData(answer);
+		    		        pieChart.setLayoutX(4);
+		    		        pieChart.setLayoutY(160);
+		    		        pieChart.setTitle("Most Frequently Used Floors");
+		    		        if(root.getChildren().contains(pieChart))root.getChildren().remove(pieChart);
+		    		        root.getChildren().add(pieChart);
 		        			result.setText(resulttext);
 		        			con.close();  
 		        			}catch(Exception e){ System.out.println(e);}  
 		            }
 		        });
-		        
-		        Pane root = new Pane(); 
+		         
 				root.getChildren().add(btn);  
 				root.getChildren().add(result); 
 				root.getChildren().add(cb);
@@ -597,14 +621,17 @@ public class Main extends Application {
 		public Pane mostbuilding() {
 			try {
 				//create all element
+		        Pane root = new Pane(); 
 				Button btn = new Button();
 				Text result = new Text();
+				PieChart pieChart = new PieChart();
+				
 				result.setX(50);
 				result.setY(100);
 				
 		        btn.setText("max building");
 		        btn.setLayoutX(200);
-		        btn.setLayoutY(200);
+		        btn.setLayoutY(10);
 		        // only 2 location is need
 		        btn.setOnAction(new EventHandler<ActionEvent>() {
 		 
@@ -632,16 +659,24 @@ public class Main extends Application {
 		        					"LIMIT 5;"
 		        					);
 		        			String resulttext = "";
+		        			ObservableList<Data> answer = FXCollections.observableArrayList();
 		        			while(rs.next())  {
 		        				resulttext+="Building: "+rs.getString(1)+"  Frequency: "+rs.getInt(2) +"\n";  
+		        				answer.add(new PieChart.Data(rs.getString(1),rs.getInt(2)));
 		        			}
+		        			result.setText(resulttext);
+		    		        pieChart.setData(answer);
+		    		        pieChart.setLayoutX(4);
+		    		        pieChart.setLayoutY(160);
+		    		        pieChart.setTitle("Most Frequently Used Buildings");
+		    		        if(root.getChildren().contains(pieChart))root.getChildren().remove(pieChart);
+		    		        root.getChildren().add(pieChart); 
 		        			result.setText(resulttext);
 		        			con.close();  
 		        			}catch(Exception e){ System.out.println(e);}  
 		            }
 		        });
-		        
-		        Pane root = new Pane(); 
+
 				root.getChildren().add(btn);  
 				root.getChildren().add(result);  
 				return root;
@@ -655,21 +690,25 @@ public class Main extends Application {
 		public Pane mostcar() {
 			try {
 				//create all element
+		        Pane root = new Pane(); 
 				Button btn = new Button();
 				Text result = new Text();
+		        PieChart pieChart = new PieChart();
+
 				result.setX(50);
 				result.setY(100);
 				
 		        btn.setText("find common car");
 		        btn.setLayoutX(200);
-		        btn.setLayoutY(200);
+		        btn.setLayoutY(10);
 		        // only 2 location is need
 		        btn.setOnAction(new EventHandler<ActionEvent>() {
 		 
 		            @Override
 		            public void handle(ActionEvent event) {
 		            	//the query
-		            	try{  
+		            	try{
+		            		ObservableList<Data> answer = FXCollections.observableArrayList();
 		        			Class.forName("com.mysql.cj.jdbc.Driver");
 		        			//the first thing is the host id, plz also put serverTimezone=UTC to set up srever time. 
 		        			//root is the name of the user, password 123456 , 
@@ -685,19 +724,27 @@ public class Main extends Application {
 		        					"   JOIN ParkingSpot ON (ParkingHistory.parkingSpotId = parkingSpot.Id)\r\n" + 
 		        					"   JOIN VehicleType ON (VehicleType.ID = ParkingSpot.vehicleTypeId)\r\n" + 
 		        					"GROUP BY VehicleType.Id\r\n" + 
-		        					"ORDER BY Frequency DESC;"
+		        					"ORDER BY Frequency DESC\r\n" + 
+		        					"LIMIT 5;"
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
 		        				resulttext+="MostCommonType: "+rs.getString(1)+"  Number: "+rs.getInt(2) +"\n";  
+		        				answer.add(new PieChart.Data(rs.getString(1),rs.getInt(2)));
 		        			}
 		        			result.setText(resulttext);
+		    		        pieChart.setData(answer);
+		    		        pieChart.setLayoutX(4);
+		    		        pieChart.setLayoutY(160);
+		    		        pieChart.setTitle("Most Common Vehicle Types");
+		    		        if(root.getChildren().contains(pieChart))root.getChildren().remove(pieChart);
+		    		        root.getChildren().add(pieChart); 
 		        			con.close();  
 		        			}catch(Exception e){ System.out.println(e);}  
 		            }
 		        });
 		        
-		        Pane root = new Pane(); 
+
 				root.getChildren().add(btn);  
 				root.getChildren().add(result);  
 				return root;
