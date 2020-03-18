@@ -233,64 +233,97 @@ public class Main extends Application {
 	}
 	
 	//creating page for finding space record in the past
-		public Pane findplacebytime() {
-			try {
-		        
-				//create all element
-				Pane root = new Pane(); 
-				Button btn = new Button();
-				ListView result = new ListView();
-				
-		        btn.setText("avalible space record");
-		        btn.setLayoutX(300);
-		        btn.setLayoutY(400);
-		        // only 2 location is need
-		        TextField cb = new TextField();
-		        cb.setLayoutX(300);
-		        cb.setLayoutY(450);
-		        btn.setOnAction(new EventHandler<ActionEvent>() {
-		 
-		            @Override
-		            public void handle(ActionEvent event) {
-		            	//the query
-		            	try{  
-		        			Class.forName("com.mysql.cj.jdbc.Driver");
-		        			//the first thing is the host id, plz also put serverTimezone=UTC to set up srever time. 
-		        			//root is the name of the user, password 123456 , 
-		        			Connection con=DriverManager.getConnection(  
-		        			"jdbc:mysql://localhost:3306/UWB_Parking?serverTimezone=UTC","root","123456");  
-		        			//here Parking is database name, root is username and password  
-		        			//System.out.println("test");
-		        			//run query
-		        			Statement stmt=con.createStatement();
-		        			//stmt.executeQuery("Insert Into Status (ID,Description) Value(3,'noonecare');");  
-		        			ResultSet rs=stmt.executeQuery("SELECT Building.name, Floor.FloorNumber, SpotNumber\r\n" + 
-		        					"FROM ParkingSpot\r\n" + 
-		        					"  JOIN Floor on (Floor.id = ParkingSpot.floorId)\r\n" + 
-		        					"  JOIN ParkingHistory ON (ParkingSpot.id = ParkingHistory.id)\r\n" + 
-		        					"  JOIN Building ON (Building.id = floor.buildingId)\r\n" + 
-		        					"Where StartTime >= '"+ cb.getText()+"' OR EndTime <= '"+ cb.getText()+ "';");
-		        			result.getItems().clear();
-		        			while(rs.next())  {
-		        				result.getItems().add("Building: " + rs.getString(1)+" Floor: "+rs.getInt(2)+"  SpotID: "+rs.getInt(3));  
-		        			}
-//		        			else {result.setText("no space in this building");}
-//		        			while(rs.next());
-		        			con.close();  
-		        			}catch(Exception e){ System.out.println(e);}  
-		            }
-		        });
-		        
-				root.getChildren().add(btn);  
-				root.getChildren().add(result);  
-				root.getChildren().add(cb);
-				return root;
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
+	public Pane findplacebytime() {
+		try {
+	        
+			//create all element
+			Pane root = new Pane(); 
+			Button btn = new Button();
+			TableView result = new TableView();
+			TableColumn build = new TableColumn("Building");
+			build.setMinWidth(50);
+			build.setCellValueFactory(
+	                new PropertyValueFactory<Parkingposition, String>("Building"));
 			
-			return new Pane();
+	        TableColumn floor = new TableColumn("Floor");
+	        floor.setMinWidth(50);
+	        floor.setCellValueFactory(
+	                new PropertyValueFactory<Parkingposition, String>("floor"));
+
+	        TableColumn parkingSpot = new TableColumn("Parking Spot");
+	        parkingSpot.setMinWidth(100);
+	        parkingSpot.setCellValueFactory(
+	                new PropertyValueFactory<Parkingposition, String>("parkingSpot"));
+	        
+	        result.getColumns().addAll(build,floor, parkingSpot);
+	        
+	        ObservableList<Parkingposition> data =
+	                FXCollections.observableArrayList();
+	        result.setItems(data);
+	        
+	        final VBox vbox = new VBox();
+	        vbox.setSpacing(5);
+	        vbox.setPadding(new Insets(0, 0, 0, 0));
+	        vbox.getChildren().add(result);
+			
+	        btn.setText("avalible space record");
+	        btn.setLayoutX(300);
+	        btn.setLayoutY(400);
+	        // only 2 location is need
+	        TextField cb = new TextField();
+	        cb.setLayoutX(300);
+	        cb.setLayoutY(450);
+	        btn.setOnAction(new EventHandler<ActionEvent>() {
+	 
+	            @Override
+	            public void handle(ActionEvent event) {
+	            	//the query
+	            	try{  
+	        			Class.forName("com.mysql.cj.jdbc.Driver");
+	        			//the first thing is the host id, plz also put serverTimezone=UTC to set up srever time. 
+	        			//root is the name of the user, password 123456 , 
+	        			Connection con=DriverManager.getConnection(  
+	        			"jdbc:mysql://localhost:3306/UWB_Parking?serverTimezone=UTC","root","123456");  
+	        			//here Parking is database name, root is username and password  
+	        			//System.out.println("test");
+	        			//run query
+	        			Statement stmt=con.createStatement();
+	        			//stmt.executeQuery("Insert Into Status (ID,Description) Value(3,'noonecare');");  
+	        			
+	        			ResultSet rs=stmt.executeQuery("SELECT ParkingSpot.ID AS ParkingSpotID, ParkingSpot.SpotNumber, Floor.FloorNumber, Building.Name AS BuildingName\r\n" + 
+	        					"FROM ParkingSpot\r\n" + 
+	        					"    JOIN Floor ON (ParkingSpot.FloorID = Floor.ID)\r\n" + 
+	        					"    JOIN Building ON (Floor.BuildingID = Building.ID)\r\n" + 
+	        					"WHERE ParkingSpot.ID NOT IN (\r\n" + 
+	        					"    SELECT ParkingSpot.ID AS ParkingSpotID\r\n" + 
+	        					"    FROM ParkingSpot\r\n" + 
+	        					"        JOIN ParkingHistory ON (ParkingSpot.ID = ParkingHistory.ParkingSpotID)\r\n" + 
+	        					"    WHERE StartTime <= '"+ cb.getText()+"' AND (EndTime >= '"+ cb.getText()+"' OR EndTime IS NULL)\r\n" + 
+	        					");");
+	        			result.getItems().clear();
+	        			while(rs.next()) {
+                            data.add(new Parkingposition(new Integer(rs.getInt(3)).toString(), new Integer(rs.getInt(2)).toString(), rs.getString(4)));
+                        }
+//	        			while(rs.next())  {
+//	        				result.getItems().add("Building: " + rs.getString(1)+" Floor: "+rs.getInt(2)+"  SpotID: "+rs.getInt(3));  
+//	        			}
+//	        			else {result.setText("no space in this building");}
+//	        			while(rs.next());
+	        			con.close();  
+	        			}catch(Exception e){ System.out.println(e);}  
+	            }
+	        });
+	        
+			root.getChildren().add(btn);  
+			root.getChildren().add(result);  
+			root.getChildren().add(cb);
+			return root;
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
+		
+		return new Pane();
+	}
 	
 	//creating page for finding space
 	
@@ -392,15 +425,19 @@ public class Main extends Application {
 		        			//run query
 		        			Statement stmt=con.createStatement();
 		        			//stmt.executeQuery("Insert Into Status (ID,Description) Value(3,'noonecare');");  
-		        			ResultSet rs=stmt.executeQuery("SELECT Building.name, COUNT(*) AS Available\r\n" + 
+		        			ResultSet rs=stmt.executeQuery("SELECT COUNT(*) AS SpotsAvailable\r\n" + 
                                     "FROM ParkingSpot\r\n" + 
-                                    "  JOIN Floor on (Floor.id = ParkingSpot.floorId)\r\n" + 
-                                    "  JOIN ParkingHistory ON (ParkingSpot.id = ParkingHistory.id)\r\n" +
-                                    "  JOIN Building ON (Building.id = floor.buildingId)\r\n" +
-                                    "Where (StartTime >= '"+ cb2.getText()+"' OR EndTime <= '"+ cb2.getText()+"') AND Building.name = '"+ cb.getValue()+"';");
-		        			String resulttext = "";
-		        			while(rs.next())  {
-                                resulttext+="building: "+cb.getValue()+"  remain space: "+rs.getInt(2) +"\n";
+                                    "    JOIN Floor ON (ParkingSpot.FloorID = Floor.ID)\r\n" + 
+                                    "    JOIN Building ON (Floor.BuildingID = Building.ID)\r\n" + 
+                                    "WHERE ParkingSpot.ID NOT IN (\r\n" + 
+                                    "    SELECT ParkingSpot.ID AS ParkingSpotID\r\n" + 
+                                    "    FROM ParkingSpot\r\n" + 
+                                    "        JOIN ParkingHistory ON (ParkingSpot.ID = ParkingHistory.ParkingSpotID)\r\n" + 
+                                    "    WHERE StartTime <= '"+ cb2.getText()+"' AND (EndTime >= '"+ cb2.getText()+"' OR EndTime IS NULL)\r\n" + 
+                                    ") AND Building.Name = '"+cb.getValue()+"';");
+                            String resulttext = "";
+                            while(rs.next())  {
+                                resulttext+="building: "+cb.getValue()+"  remain space: "+rs.getInt(1) +"\n";
                             }
 		        			result.setText(resulttext);
 		        			con.close();  
@@ -676,6 +713,35 @@ public class Main extends Application {
 			parkingSpot.set(strParkingSpot);
 		}
 	}
+	
+	public static class Parkingposition {
+        private final SimpleStringProperty building;
+        private final SimpleStringProperty floor;
+        private final SimpleStringProperty parkingSpot;
+        private Parkingposition(String floor, String parkingSpot,String building) {
+            this.floor = new SimpleStringProperty(floor);
+            this.parkingSpot = new SimpleStringProperty(parkingSpot);
+            this.building = new SimpleStringProperty(building);
+        }
+        public String getBuilding() {
+            return building.get();
+        }
+        public String getFloor() {
+            return floor.get();
+        }
+        public String getParkingSpot() {
+            return parkingSpot.get();
+        }
+        public void setFloor(String strFloor) {
+            floor.set(strFloor);
+        }
+        public void setParkingSpot(String strParkingSpot) {
+            parkingSpot.set(strParkingSpot);
+        }
+        public void setBuilding(String strFloor) {
+            building.set(strFloor);
+        }
+    }
 
 	public static void main(String[] args) {
 		launch(args);
