@@ -62,31 +62,48 @@ public class SensorSystemSimulation extends Application {
 	        			//run query
 	        			Statement stmt=con.createStatement();
 	        			//stmt.executeQuery("Insert Into Status (ID,Description) Value(3,'noonecare');");
+	        			String sql = "INSERT INTO Vehicle(RFID) VALUES(?)";
+	        			String rfID = cbvID.getText();
+	        			int vehicleID = 0;
+	        	        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
+	        	            pstmt.setString(1, rfID);
+	        	            pstmt.executeUpdate();
+	        	        } catch (SQLException e) {
+	        	            System.out.println(e.getMessage());
+	        	        }
+	        	        sql = "SELECT id FROM Vehicle WHERE rfID = ?";
+	        	        try {
+	        	            PreparedStatement pstmt = con.prepareStatement(sql);
+	        	            pstmt.setString(1, rfID);
+	        	            ResultSet rs = pstmt.executeQuery();
+	        	            if (rs.next()) {
+	        	            	vehicleID = rs.getInt("id");
+	        	            }
+	        	        } catch (SQLException e) {
+	        	            System.out.println(e.getMessage());
+	        	        }
 	        			ResultSet rs=stmt.executeQuery("SELECT Status.Description\r\n" + 
-                                "FROM Status\r\n" + 
-                                "    JOIN ParkingSpot ON (ParkingSpot.StatusID = Status.ID)\r\n" + 
-                                "WHERE ParkingSpot.ID = "+ Integer.toString(Integer.parseInt(cbsoptID.getText())) + ";");
-	        			//boolean abc = rs.next();
-	        			//System.out.println(abc);
+	        					"FROM Status\r\n" + 
+	        					"    JOIN ParkingSpot ON (ParkingSpot.StatusID = Status.ID)\r\n" + 
+	        					"WHERE ParkingSpot.ID = "+ Integer.toString(Integer.parseInt(cbsoptID.getText())) + ";");
+
 	        			if(rs.next())  {
-	        			//if (abc == true) {
-	        				String test1 = rs.getString(1);
-	        				//if(rs.getString(1) == "Available") {
-	        				if (test1.equals("Available")) {
-                                PreparedStatement pstmt = con.prepareStatement("INSERT INTO ParkingHistory(ParkingSpotID, VehicleID, startTime, endTime) VALUES(?, ?, ?, ?)");
-                                long millis=System.currentTimeMillis() - 25200000;
-                                java.sql.Timestamp date=new java.sql.Timestamp(millis);
-                                pstmt.setInt(1, Integer.parseInt(cbsoptID.getText()));
-                                pstmt.setInt(2, Integer.parseInt(cbvID.getText()));
-                                pstmt.setTimestamp(3,date);
-                                pstmt.setNull(4, java.sql.Types.DATE);
-                                pstmt.executeUpdate();
-                                pstmt = con.prepareStatement("UPDATE ParkingSpot SET StatusID = ? WHERE ParkingSpot.ID = ?");
-                                pstmt.setInt(1, 2);
-                                pstmt.setInt(2, Integer.parseInt(cbsoptID.getText()));
-                                pstmt.executeUpdate();
-                            }
-                            else Errorm.setText("Car already parked");
+	        				
+	        				if(rs.getString(1).equals("Available")) {
+	        					PreparedStatement pstmt = con.prepareStatement("INSERT INTO ParkingHistory(ParkingSpotID, VehicleID, startTime, endTime) VALUES(?, ?, ?, ?)");
+	        					long millis=System.currentTimeMillis() - 25200000;  
+	        					java.sql.Timestamp date=new java.sql.Timestamp(millis);  
+	        		            pstmt.setInt(1, Integer.parseInt(cbsoptID.getText()));
+	        		            pstmt.setInt(2, vehicleID);
+	        		            pstmt.setTimestamp(3,date);
+	        		            pstmt.setNull(4, java.sql.Types.DATE);
+	        		            pstmt.executeUpdate();
+	        		            pstmt = con.prepareStatement("UPDATE ParkingSpot SET StatusID = ? WHERE ParkingSpot.ID = ?");
+	        			        pstmt.setInt(1, 2);
+	        			        pstmt.setInt(2, Integer.parseInt(cbsoptID.getText()));
+	        			        pstmt.executeUpdate();
+	        				}
+	        				else Errorm.setText("Car already parked");
 	        			}
 	        			else {
 	        				Errorm.setText("No such spot!");
@@ -95,10 +112,13 @@ public class SensorSystemSimulation extends Application {
 //	        			else {result.setText("no space in this building");}
 //	        			while(rs.next());
 	        			con.close();  
-	        			}catch(Exception e){Errorm.setText("Error occur in sql make an exception, please check your data!");}  
+	        			}catch(Exception e){Errorm.setText("Error occur in sql make an exception, \n please check your data!");}  
 	            }
 	        });
 			Button removebtn = new Button();
+			removebtn.setLayoutX(200);
+			removebtn.setLayoutY(160);
+			removebtn.setText("Car leaves");
 			removebtn.setOnAction(new EventHandler<ActionEvent>() {
 				 
 	            @Override
@@ -122,25 +142,25 @@ public class SensorSystemSimulation extends Application {
 	        					"WHERE ParkingSpot.ID = "+ Integer.toString(Integer.parseInt(cbsoptID.getText())) + ";");
 
 	        			if(rs.next())  {
-
-                            if(rs.getString(1).equals("Occupied")) {
-                                String sql = "UPDATE ParkingHistory set endTime = ? WHERE ParkingSpotID = ? AND endTime IS NULL";
-                                PreparedStatement pstmt = con.prepareStatement(sql);
-                                long millis=System.currentTimeMillis() - 25200000;
-                                java.sql.Timestamp date=new java.sql.Timestamp(millis);
-                                pstmt.setTimestamp(1, date);
-                                pstmt.setInt(2, Integer.parseInt(cbsoptID.getText()));
-                                pstmt.executeUpdate();
-                                pstmt = con.prepareStatement("UPDATE ParkingSpot SET StatusID = ? WHERE ParkingSpot.ID = ?");
-                                pstmt.setInt(1, 1);
-                                pstmt.setInt(2, Integer.parseInt(cbsoptID.getText()));
-                                pstmt.executeUpdate();
-                            }
-                            else Errorm.setText("Car not parked");
-                        }
-                        else {
-                            Errorm.setText("No such spot!");
-                        }
+	        				
+	        				if(rs.getString(1).equals("Occupied")) {
+	        					String sql = "UPDATE ParkingHistory set endTime = ? WHERE ParkingSpotID = ? AND isNULL(endtime)";
+	        			        PreparedStatement pstmt = con.prepareStatement(sql);
+	        			        long millis=System.currentTimeMillis() - 25200000;  
+	        					java.sql.Timestamp date=new java.sql.Timestamp(millis);  
+	        			        pstmt.setTimestamp(1, date);
+	        			        pstmt.setInt(2, Integer.parseInt(cbsoptID.getText()));
+	        			        pstmt.executeUpdate();
+	        		            pstmt = con.prepareStatement("UPDATE ParkingSpot SET StatusID = ? WHERE ParkingSpot.ID = ?");
+	        			        pstmt.setInt(1, 1);
+	        			        pstmt.setInt(2, Integer.parseInt(cbsoptID.getText()));
+	        			        pstmt.executeUpdate();
+	        				}
+	        				else Errorm.setText("Car not parked");
+	        			}
+	        			else {
+	        				Errorm.setText("No such spot!");
+	        			}
 	        			
 //	        			else {result.setText("no space in this building");}
 //	        			while(rs.next());
@@ -148,10 +168,6 @@ public class SensorSystemSimulation extends Application {
 	        			}catch(Exception e){Errorm.setText("Error occur in sql make an exception, \n please check your data!");}  
 	            }
 	        });
-			
-			removebtn.setLayoutX(200);
-			removebtn.setLayoutY(160);
-			removebtn.setText("Car leaves");
 			Text Title = new Text();
 			Title.setText("Sensor System Simulation");
 			Title.setLayoutX(120);
@@ -165,7 +181,7 @@ public class SensorSystemSimulation extends Application {
 			sID.setLayoutX(40);
 			sID.setLayoutY(115);
 			Text vID = new Text();
-			vID.setText("VehicleID:");
+			vID.setText("RFID       :");
 			vID.setLayoutX(40);
 			vID.setLayoutY(145);
 			root.getChildren().addAll(insertbtn,removebtn,cbsoptID,cbvID,sID,vID,Title,Errorm,fID);
