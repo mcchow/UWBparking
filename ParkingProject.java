@@ -51,6 +51,7 @@ public class ParkingProject
     	app.insertParkingSpot(384+i, 25, 1, 905427, i);
     } 
     
+    /*
     app.drivein(34234, 3, 67);
     Thread.sleep(3000);
     app.driveout(34234, 3, 67);
@@ -71,6 +72,8 @@ public class ParkingProject
     app.drivein(12345, 25, 390);
     Thread.sleep(3000);
     app.driveout(12345, 25, 390);
+    */
+    
     //app.initialize();
 
         //app.selectAll();
@@ -81,7 +84,7 @@ public class ParkingProject
         String url = "jdbc:mysql://localhost:3306/UWB_Parking";
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(url, "root", "UWBParkingSystem");
+            conn = DriverManager.getConnection(url, "root", "123456");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

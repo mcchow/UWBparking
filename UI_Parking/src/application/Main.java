@@ -166,7 +166,7 @@ public class Main extends Application {
 	        cb.setLayoutY(400);
 	        
 	        btn.setOnAction(new EventHandler<ActionEvent>() {
-	 
+	   		 
 	            @Override
 	            public void handle(ActionEvent event) {
 	            	//the query
@@ -182,8 +182,15 @@ public class Main extends Application {
 	        	        parkingSpot.setMinWidth(100);
 	        	        parkingSpot.setCellValueFactory(
 	        	                new PropertyValueFactory<ParkingSpot, String>("parkingSpot"));
-	        	        
-	        	        table.getColumns().addAll(floor, parkingSpot);
+	        	        TableColumn spottype = new TableColumn("Type");
+	        	        spottype.setMinWidth(100);
+	        	        spottype.setCellValueFactory(
+	        	                new PropertyValueFactory<ParkingSpot, String>("type"));
+	        	        TableColumn SpotID = new TableColumn("ID");
+	        	        SpotID.setMinWidth(100);
+	        	        SpotID.setCellValueFactory(
+	        	                new PropertyValueFactory<ParkingSpot, String>("id"));
+	        	        table.getColumns().addAll(SpotID, floor, parkingSpot, spottype);
 	        	 
 	        	        final VBox vbox = new VBox();
 	        	        vbox.setSpacing(5);
@@ -204,15 +211,22 @@ public class Main extends Application {
 	        			//run query
 	        			Statement stmt=con.createStatement();
 	        			//stmt.executeQuery("Insert Into Status (ID,Description) Value(3,'noonecare');");  
-	        			ResultSet rs=stmt.executeQuery("SELECT Floor.FloorNumber, SpotNumber " + 
-	        					"FROM ParkingSpot " + 
-	        					"  JOIN Floor on (Floor.id = ParkingSpot.floorId) " + 
-	        					"  JOIN Status ON (Status.id = ParkingSpot.statusId) " + 
-	        					"  JOIN Building ON (Building.id = floor.buildingId) " + 
-	        					"Where status.description = 'Available' AND Building.name = \""+ (String)cb.getValue()+"\";"
-	        					);
+//	        			ResultSet rs=stmt.executeQuery("SELECT Floor.FloorNumber, SpotNumber " + 
+//	        					"FROM ParkingSpot " + 
+//	        					"  JOIN Floor on (Floor.id = ParkingSpot.floorId) " + 
+//	        					"  JOIN Status ON (Status.id = ParkingSpot.statusId) " + 
+//	        					"  JOIN Building ON (Building.id = floor.buildingId) " + 
+//	        					"Where status.description = 'Available' AND Building.name = \""+ (String)cb.getValue()+"\";"
+//	        					);
+	        			ResultSet rs=stmt.executeQuery("SELECT Floor.FloorNumber, SpotNumber, VehicleType.Description AS VehicleType, ParkingSpot.ID AS ParkingSpotID\r\n" + 
+	        			"FROM ParkingSpot \r\n" + 
+	        			"    JOIN Floor on (Floor.id = ParkingSpot.floorId)\r\n" + 
+	        			"    JOIN Status ON (Status.id = ParkingSpot.statusId)\r\n" + 
+	        			"    JOIN Building ON (Building.id = floor.buildingId)\r\n" + 
+	        			"    JOIN VehicleType ON (ParkingSpot.VehicleTypeID = VehicleType.ID)\r\n" + 
+	        			"WHERE Status.Description = 'Available' AND Building.name = '"+ (String)cb.getValue()+"';");
 	        			while(rs.next()) {
-	        				data.add(new ParkingSpot(new Integer(rs.getInt(1)).toString(), new Integer(rs.getInt(2)).toString()));  
+	        				data.add(new ParkingSpot(new Integer(rs.getInt(1)).toString(), new Integer(rs.getInt(2)).toString() ,rs.getString(4),rs.getString(3)));  
 	        			}
 	        	        root.getChildren().add(vbox);
 	        			con.close();  
@@ -671,7 +685,7 @@ public class Main extends Application {
 		        					"   JOIN ParkingSpot ON (ParkingHistory.parkingSpotId = parkingSpot.Id)\r\n" + 
 		        					"   JOIN VehicleType ON (VehicleType.ID = ParkingSpot.vehicleTypeId)\r\n" + 
 		        					"GROUP BY VehicleType.Id\r\n" + 
-		        					"ORDER BY Frequency;"
+		        					"ORDER BY Frequency DESC;"
 		        					);
 		        			String resulttext = "";
 		        			while(rs.next())  {
@@ -693,26 +707,45 @@ public class Main extends Application {
 			
 			return new Pane();
 		}
-	public static class ParkingSpot {
-		private final SimpleStringProperty floor;
-		private final SimpleStringProperty parkingSpot;
-        private ParkingSpot(String floor, String parkingSpot) {
-            this.floor = new SimpleStringProperty(floor);
-            this.parkingSpot = new SimpleStringProperty(parkingSpot);
+		
+		public static class ParkingSpot {
+            private final SimpleStringProperty floor;
+            private final SimpleStringProperty parkingSpot;
+            private final SimpleStringProperty id;
+            private final SimpleStringProperty type;
+            private ParkingSpot(String floor, String parkingSpot, String id,String type) {
+                this.floor = new SimpleStringProperty(floor);
+                this.parkingSpot = new SimpleStringProperty(parkingSpot);
+                this.id = new SimpleStringProperty(id);
+                this.type = new SimpleStringProperty(type);
+            }
+            public String getFloor() {
+                return floor.get();
+            }
+            public String getParkingSpot() {
+                return parkingSpot.get();
+            }
+            public String getId() {
+                return id.get();
+            }
+            public String getType() {
+                return type.get();
+            }
+
+            public void setFloor(String strFloor) {
+                floor.set(strFloor);
+            }
+            public void setParkingSpot(String strParkingSpot) {
+                parkingSpot.set(strParkingSpot);
+            }
+
+            public void setId(String str) {
+                 id.set(str);
+            }
+            public void setType(String str) {
+                type.set(str);
+            }
         }
-		public String getFloor() {
-			return floor.get();
-		}
-		public String getParkingSpot() {
-			return parkingSpot.get();
-		}
-		public void setFloor(String strFloor) {
-			floor.set(strFloor);
-		}
-		public void setParkingSpot(String strParkingSpot) {
-			parkingSpot.set(strParkingSpot);
-		}
-	}
 	
 	public static class Parkingposition {
         private final SimpleStringProperty building;
