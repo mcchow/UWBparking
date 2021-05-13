@@ -1,5 +1,5 @@
 # UWBparking
-A Database System for UWB parking that provides Java GUI program allow the user to interact with MySQL Database using Java, allow the user to reserve parking, looking empty parking and produce usage statistic to perform an evaluation.
+A Database System for UWB parking that provides Java GUI program allow the user to interact with SQL Database using Java, allow the user to reserve parking, looking empty parking and produce usage statistic to perform an evaluation.
 
 Function that created:
 1. Park a Parking: The user is allow to park in a parking, assuming a sensor system is going to update the parking status when someone park
